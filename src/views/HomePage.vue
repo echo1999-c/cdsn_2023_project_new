@@ -4,13 +4,17 @@
             <div class="col" style="height: calc(100% - 3px); width: calc(20% - 3px);" >
                 <CalendarOverview></CalendarOverview>
             </div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);"></div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);">
+                <TimeLine></TimeLine>
+            </div>
             <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);"></div>
         </div>
         <div class="second_row" style="width: 100%; height: 50%;">
-            <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);" ></div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(25% - 3px);"></div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);"></div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);" >
+                <ProductProjection></ProductProjection>
+            </div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(30% - 3px);"></div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);"></div>
         </div>
     </div>
 </template>
@@ -18,11 +22,15 @@
 
 
 import CalendarOverview from '@/components/CalendarOverview.vue';
+import ProductProjection from '@/components/ProductProjection.vue';
+import TimeLine from '@/components/TimeLine.vue';
   
 export default {
     name: "homepage",
     components: {
         CalendarOverview,
+        ProductProjection,
+        TimeLine
     }
 };
 </script>

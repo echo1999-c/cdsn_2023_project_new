@@ -2,16 +2,8 @@
     <div id="CalendarOverview"  ref="calendarOverview" class="calendar">
         <div class="up">Calendar Overview</div>
         <div class="mid" id="legend" ref="midview">
-            <!-- <el-select v-model="value" style="height: 10px;" class="customer_select" clearable placeholder="请选择">
-                    <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                    </el-option>
-                </el-select> -->
             <div id="left" style="width: 50%; height: 100%; float: left;" ref="midviewLeft">
-                <el-select v-model="value" style="height: 10px;" class="customer_select" clearable placeholder="请选择">
+                <el-select v-model="value" style="height: 30px;" class="customer_select" placeholder="请选择">
                     <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -22,9 +14,7 @@
             </div>
             <div id="right" style="width: 50%; height: 100%; float: left;" ref="midviewRight"></div>    
         </div>
-        <div class="down" id="view"  ref="downview">
-            
-        </div>
+        <div class="down" id="calendarview"  ref="downview"></div>
     </div>
 </template>
 
@@ -38,6 +28,7 @@ export default {
             width: '',
             height: '',
             rawData: '',
+            meanData: '',
             options: [{
                 value: '波次数量',
                 label: '波次数量'
@@ -71,7 +62,6 @@ export default {
             var rawData = this.rawData
 
             var value = this.value
-            console.log("value", value)
 
             var lowerQuartile = 0
             var upperQuartile = 0
@@ -124,10 +114,7 @@ export default {
             this.upperQuartile = upperQuartile
             this.minVal = minVal
             this.maxVal = maxVal
-            console.log("lowerQuartile", lowerQuartile)
-            console.log("upperQuartile", upperQuartile)
-            console.log("minVal", minVal)
-            console.log("maxVal", maxVal)
+            
 
         },
         drawLegend(){
@@ -171,7 +158,7 @@ export default {
                 .attr("stop-color", function(d) { return d.color; });
 
             var textoffsetX = 40
-            var textoffsetY = 15
+            var textoffsetY = 12
             var textgap = legendWidth / 3
 
             // 添加一个使用渐变的矩形
@@ -200,7 +187,7 @@ export default {
                         str = textoffsetX + legendWidth
                     return str; 
                 })
-                .attr("y", 34)
+                .attr("y", 35)
                 // .attr("text-anchor", "middle")
                 .attr("text-anchor", function(d, i) {
                     var str = ""
@@ -217,12 +204,15 @@ export default {
                 .style("font-weight", "bold")
                 .text(function(d) { return d; });
         },
+        drawRroseChart(){
+
+        },
         drawCalendar(){
-            d3.select('#view').selectAll('*').remove();
+            d3.select('#calendarview').selectAll('*').remove();
             let width = this.width
             let height = this.height
 
-            const svg = d3.select("#view")
+            const svg = d3.select("#calendarview")
                             .append('svg')
                             .attr('width', width)
                             .attr('height', height)
@@ -269,90 +259,197 @@ export default {
             var verticalPos_circle = -750 // 圆形圆心的垂直位置
 
             var that = this
+            let tooltip = d3.select('#view')
+                            .append("div")
+                            .attr("class", "tooltip")
+            // console.log("tooltip", tooltip)
+                
 
             // 在每个g元素中添加文字标签和圆形
             months.each(function(month, i){
-                var monthDates = dates.filter(function(d) { 
-                    return d.getMonth() === i; // 过滤出当前月份的数据
-                });
-
-                // 计算每个月的波次数量的平均值
-                var monthData = rawData.filter(function(o) {
-                    return new Date(o.pickingTime).getMonth() === month;
-                });
-                var avgBatchNum = d3.mean(monthData, function(d) { return d.batchNum; });
-                console.log("avgBatchNum", avgBatchNum)
-
-                var radiusScale = d3.scaleLinear()
-                                    .domain([batchNumMin, batchNumMax])
-                                    .range([0, 20]);
-
-
-                // 添加环形图
-                // var arc = d3.arc()
-                //             .innerRadius(50) // 内半径
-                //             .outerRadius(50 + avgBatchNum / 25) // 外半径
-                //             .startAngle(0) // 起始角度
-                //             .endAngle(2 * Math.PI); // 终止角度
-
-                // d3.select(this).append("path")
-                //     .attr("d", arc)
-                //     .attr("fill", "grey");
-                
-                d3.select(this).selectAll("text")
-                    .data(labels)
-                    .enter()
-                    .append("text")
-                    .attr("x", function(d, i) { return (i - 3) * radius * 2; })
-                    .attr("y", verticalPos_text)
-                    .attr("text-anchor", "middle")
-                    .style('font-size', 24)
-                    .style('font-family', 'Times New Roman')
-                    .style("font-weight", "bold")
-                    .text(function(d) { return d; })
+                    var monthDates = dates.filter(function(d) { 
+                        return d.getMonth() === i; // 过滤出当前月份的数据
+                    }); 
+          
+                    d3.select(this).selectAll("text")
+                        .data(labels)
+                        .enter()
+                        .append("text")
+                        .attr("x", function(d, i) { return (i - 3) * radius * 2; })
+                        .attr("y", verticalPos_text)
+                        .attr("text-anchor", "middle")
+                        .style('font-size', 24)
+                        .style('font-family', 'Times New Roman')
+                        .style("font-weight", "bold")
+                        .text(function(d) { return d; })
+                        
                     
-                
-                d3.select(this).selectAll("circle")
-                    .data(monthDates)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function(d, i) { 
-                        // console.log("d", d)
-                        var day = d.getDay() // 一周中的某一天
-                        var date = d.getDate() //  一个月中的某一天
-                        return (day - 3) * radius * 2;  
-                    }) 
-                    .attr("cy", function(d) { 
-                        const firstDay = new Date(2023, month, 1); // 当前月份的第一天
-                        const startingDay = firstDay.getDay(); // 第一天是周几
-                        const targetDate = d.getDate(); // 一个月中的某一天
-                        const row = Math.ceil((targetDate - 7 + startingDay) / 7); // 计算行
-                        return verticalPos_circle + row * radius * 2;           
-                    })
-                    .attr("fill", (d, i) => {
-                        var scaleData = rawData.find(function(o) {
-                            return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
-                        });
-                        console.log("value", that.value)
-                        var val = that.value
-                        if(val === "波次数量"){
-                            return scaleData ? colorScale(scaleData.batchNum) : 'black';
-                        } else if(val === "订单数量"){
-                            return scaleData ? colorScale(scaleData.orderNum) : 'black';
-                        } else if(val === "货品数量"){
-                            return scaleData ? colorScale(scaleData.quantity) : 'black';
-                        } else {
-                            return scaleData ? colorScale(scaleData.goodsNum) : 'black';
-                        }
+                    d3.select(this).selectAll("circle")
+                        .data(monthDates)
+                        .enter()
+                        .append("circle")
+                        .attr("cx", function(d, i) { 
+                            var day = d.getDay() // 一周中的某一天
+                            var date = d.getDate() //  一个月中的某一天
+                            return (day - 3) * radius * 2;  
+                        }) 
+                        .attr("cy", function(d) { 
+                            const firstDay = new Date(2023, month, 1); // 当前月份的第一天
+                            const startingDay = firstDay.getDay(); // 第一天是周几
+                            const targetDate = d.getDate(); // 一个月中的某一天
+                            const row = Math.ceil((targetDate - 7 + startingDay) / 7); // 计算行
+                            return verticalPos_circle + row * radius * 2;           
+                        })
+                        .attr("fill", (d, i) => {
+                            var scaleData = rawData.find(function(o) {
+                                return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
+                            });
+                          
+                            var val = that.value
+                            if(val === "波次数量"){
+                                return scaleData ? colorScale(scaleData.batchNum) : 'black';
+                            } else if(val === "订单数量"){
+                                return scaleData ? colorScale(scaleData.orderNum) : 'black';
+                            } else if(val === "货品数量"){
+                                return scaleData ? colorScale(scaleData.quantity) : 'black';
+                            } else {
+                                return scaleData ? colorScale(scaleData.goodsNum) : 'black';
+                            }
+                        })
+                        .attr("r", radius)
+                        .on('click', function (d, item) {
+                            console.log("d", d)
+                            console.log("item", item)
 
-                    })
-                    .attr("r", radius)}) 
-            }  
+                            // 获取圆形的阴影状态
+                            var hasShadow = d3.select(this).style("filter") !== "none";
+
+                            // 如果已经有阴影，那么就移除阴影，否则就添加阴影
+                            d3.select(this)
+                                .style("filter", hasShadow ? "none" : "drop-shadow(0px 0px 10px rgba(0,0,0,0.5))");
+
+                            // console.log("state.clickDates", that.$store.state.clickDates)
+                            that.$store.commit('addClickDates', item)
+                        })
+                })
+
+                // d3.selectAll("circle")
+                // .on("mousemove", function (event, d) {
+                //     console.log("mousemove")
+                //     console.log("event", event)
+                //     console.log("d", d)
+
+                //     var filterData = rawData.find(function(o) {
+                //         return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
+                //     });
+
+                //     console.log("filterData", filterData)
+
+                //     // 获取当前时间
+                //     const currentDate = new Date(filterData.pickingTime);
+
+                //     // 获取年、月、日
+                //     const year = currentDate.getFullYear();
+                //     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+                //     const day = String(currentDate.getDate()).padStart(2, "0");
+
+                //     // 构建日期字符串
+                //     const formattedDate = `${year}-${month}-${day}`;
+
+                //     var val = that.value
+                //     let html = ''                       
+                //     if(val === "波次数量"){
+                //         html += `Date: ${formattedDate}<br>
+                //                     batchNumber: ${filterData.batchNum}`
+                //     } else if(val === "订单数量"){
+                //         html += `Date: ${formattedDate}<br>
+                //                     orderNumber: ${filterData.orderNum}`
+                //     } else if(val === "货品数量"){
+                //         html += `Date: ${formattedDate}<br>
+                //                 goodsQuantity: ${filterData.quantity}`
+                //     } else {
+                //         html += `Date: ${formattedDate}<br>
+                //                 goodsTypeNumber: ${filterData.goodsNum}`
+                //     }
+
+                    
+                //     tooltip.style("left", d.clientX + 10 + 'px')
+                //             .style("top", d.layerY + 10 + 'px')
+                //             .style("display", "inline-block")
+                //             .html(html) 
+
+                // })
+                // .on("mouseout", function (event, d) {
+                //         tooltip.style("display", "none");
+                // })
+
+
+
+
+                    var meanData = this.meanData
+                    var value = this.value
+                    var total = 0
+                    if(value === "波次数量"){
+                        total = d3.sum(meanData[0]);
+                    } else if(value === "订单数量"){
+                        total = d3.sum(meanData[1]);
+                    } else if(value === "货品数量"){
+                        total = d3.sum(meanData[2]);
+                    } else {
+                        total = d3.sum(meanData[3]);
+                    }
+
+                    const radiusScale = d3.scaleLinear()
+                                        .domain([0, total])
+                                        .range([20, 180]);
+
+                    const angleScale = d3.scaleLinear()
+                                        .domain([0, 12])
+                                        .range([0, Math.PI * 2]);
+
+                  
+                    const g = svg.append("g")
+
+                    var roseData = []
+                    if(value === "波次数量"){
+                        roseData = meanData[0];
+                    } else if(value === "订单数量"){
+                        roseData = meanData[1];
+                    } else if(value === "货品数量"){
+                        roseData = meanData[2];
+                    } else {
+                        roseData = meanData[3];
+                    }
+
+                    const gap = 0.01; // 花瓣间隙的角度
+
+                    const petals = g.selectAll("path")
+                                    .data(roseData)
+                                    .enter()
+                                    .append("path")
+                                    .attr("d", (d, i) => {
+                                        const startAngle = angleScale(i) + gap/2;
+                                        const endAngle = angleScale(i + 1) - gap/2;
+                                        const innerRadius = radiusScale(0);
+                                        const outerRadius = radiusScale(d);
+                                        return d3.arc()
+                                        .innerRadius(innerRadius)
+                                        .outerRadius(outerRadius)
+                                        .startAngle(startAngle)
+                                        .endAngle(endAngle)();
+                                    })
+                                    .attr("fill", "#73C0DF")
+                                    .attr("stroke", "#D8D8D8");
+                    
+                },        
+                
+        
     },
     mounted() {
         this.width = this.$refs.downview.offsetWidth
         this.height = this.$refs.downview.offsetHeight
         this.rawData = require('@/assets/overviewData_202301_202305.json')
+        this.meanData = require('@/assets/averageVal_202301_202305.json')
         this.initData()
         this.drawLegend()
         this.drawCalendar()
@@ -396,12 +493,26 @@ export default {
 }
 
 .customer_select{
-    width: 100px;
+    width: 120px;
     height: 15px;
     padding-top: 2px;
     margin: 0;
     font-size: 5px;
     float: left;
+    transform: scale(0.9);
+}
+
+.tooltip{
+    background-color: #eeeeee;
+    color: black;
+    padding: 10px;
+    border-radius: 4px;
+    position: absolute;
+    display: none;
+    width: 200px;
+    height: auto;
+    padding: 14px 10px 4px 10px;
+    text-align: center;
 }
 
 </style>
