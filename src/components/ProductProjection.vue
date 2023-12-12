@@ -25,7 +25,8 @@ export default {
             width: '',
             height: '',
             rawData_goodsinfo: '',
-            options: [{
+            options: [
+            {
                 value: '1月',
                 label: '1月'
             }, 
@@ -50,6 +51,8 @@ export default {
             maxVal_outboundSum: 0,
             minVal_outboundFreq: 0,
             maxVal_outboundFreq: 0,
+            rawDta:'',
+            goodsinfo: ''
         }
     },
     methods: {
@@ -61,6 +64,8 @@ export default {
             let maxVal_outboundSum = 0
             let minVal_outboundFreq = 0
             let maxVal_outboundFreq = 0
+
+            let goodsinfo = []
 
             
             if(monthvalue == "1月"){
@@ -74,6 +79,10 @@ export default {
             } else if(monthvalue == "5月"){
                 monthvalue = "2023-05"
             }
+
+            goodsinfo = rawData_goodsinfo[monthvalue]
+            this.goodsinfo = goodsinfo
+
             
             minVal_outboundSum = d3.min(rawData_goodsinfo[monthvalue], function(d) { return d.outboundSum;})
             maxVal_outboundSum = d3.max(rawData_goodsinfo[monthvalue], function(d) { return d.outboundSum;})
@@ -100,10 +109,14 @@ export default {
         },
         drawprojection(){
             d3.select('#projectionview').selectAll('*').remove();
-            // console.log(this.rawData_goodsinfo["2023-01"])
+            
             let width = this.width
             let height = this.height
             let rawData_goodsinfo = this.rawData_goodsinfo
+
+            let goodsinfo = this.goodsinfo
+            console.log("goodsinfo", goodsinfo)
+            
             
 
             const svg = d3.select("#projectionview")
@@ -130,9 +143,15 @@ export default {
                     "outboundFreq_min": 1,
                     "type": 1,
                     "locations": "B427",
-                    "locationCnt": "1"
+                    "locationCnt": "1",
+                    "outboundFreqRatio": 0.04376,
+                    "outboundSumRatio": 0.06243
             }; 
 
+            for(let i = 0; i < goodsinfo.length; i++){
+
+            }
+            
             // 定义间隙的宽度
             var gapWidth = 3; // in pixels
 
@@ -181,20 +200,23 @@ export default {
                             .domain([0, this.maxVal_outboundFreq])
                             .range([0, Math.PI]);
             
-            var outboundSum = rawData_goodsinfo["2023-01"][50]["outboundSum"]
-            var outboundFreq = rawData_goodsinfo["2023-01"][50]["outboundFreq"]
-            console.log("outboundSum", outboundSum)
+            var outboundSum = rawData_goodsinfo["2023-02"][60]["outboundSum"]
+            var outboundFreq = rawData_goodsinfo["2023-02"][60]["outboundFreq"]
+            // console.log("outboundSum", outboundSum)
+            // console.log("outboundFreq", outboundFreq)
 
             outboundSum = Math.log(outboundSum) + 1
             outboundFreq = Math.log(outboundFreq) + 1
-            console.log("log outboundSum", outboundSum)
+            // console.log("log outboundSum", outboundSum)
+            // console.log("log outboundFreq", outboundFreq)
            
             var arcoutboundSum = d3.arc()
                                     .innerRadius(60)
                                     .outerRadius(100)
                                     .startAngle(0) 
                                     .endAngle(scaleLeft(outboundSum));
-            console.log("scaleLeft(outboundSum)", scaleLeft(outboundSum))
+            // console.log("scaleLeft(outboundSum)", scaleLeft(outboundSum))
+            
             
             // 在SVG中添加一个路径元素，并使用arc生成器来创建半圆弧
             svg.append("path")
@@ -208,6 +230,7 @@ export default {
                                     .outerRadius(100)
                                     .startAngle(0) 
                                     .endAngle(scaleRight(outboundFreq));
+            // console.log("scaleright(outboundFreq)", scaleRight(outboundFreq))
 
             // 在SVG中添加一个路径元素，并使用arc生成器来创建半圆弧
             svg.append("path")
@@ -220,11 +243,11 @@ export default {
 
             
 
-            var outboundSum_lowerQ = rawData_goodsinfo["2023-01"][50]["outboundSum_lowerQuartile"];
-            var outboundSum_upperQ = rawData_goodsinfo["2023-01"][50]["outboundSum_upperQuartile"];
+            var outboundSum_lowerQ = rawData_goodsinfo["2023-02"][60]["outboundSum_lowerQuartile"];
+            var outboundSum_upperQ = rawData_goodsinfo["2023-02"][60]["outboundSum_upperQuartile"];
 
-            var outboundFreq_lowerQ = rawData_goodsinfo["2023-01"][50]["outboundFreq_lowerQuartile"];
-            var outboundFreq_upperQ = rawData_goodsinfo["2023-01"][50]["outboundFreq_upperQuartile"];
+            var outboundFreq_lowerQ = rawData_goodsinfo["2023-02"][60]["outboundFreq_lowerQuartile"];
+            var outboundFreq_upperQ = rawData_goodsinfo["2023-02"][60]["outboundFreq_upperQuartile"];
 
             outboundSum_lowerQ = Math.log(outboundSum_lowerQ) + 1
             outboundSum_upperQ = Math.log(outboundSum_upperQ) + 1
@@ -257,28 +280,30 @@ export default {
                 .style("fill", "#D8D8D8") // set the fill color to white
                 .style("stroke", "black");
             
+           
+
             // 映射outboundSum_mean
-            var outboundSum_mean = rawData_goodsinfo["2023-01"][50]["outboundSum_mean"]
-            console.log("outboundSum_mean", outboundSum_mean)
+            var outboundSum_mean = rawData_goodsinfo["2023-02"][60]["outboundSum_mean"]
+            // console.log("outboundSum_mean", outboundSum_mean)
             outboundSum_mean = Math.log(outboundSum_mean) + 1
-            console.log("log outboundSum_mean", outboundSum_mean)
+            // console.log("log outboundSum_mean", outboundSum_mean)
             var outboundSum_mean_mapped = scaleLeft(outboundSum_mean);
-            console.log("scale outboundSum_mean", outboundSum_mean_mapped)
+            // console.log("scale outboundSum_mean", outboundSum_mean_mapped)
 
 
-            var outboundSum_lowerQ = rawData_goodsinfo["2023-01"][50]["outboundSum_lowerQuartile"]
-            console.log("outboundSum_lowerQ", outboundSum_lowerQ)
-            console.log("log outboundSum_lowerQ", Math.log(outboundSum_lowerQ) + 1)
-            console.log("scale outboundSum_lowerQ", scaleLeft(Math.log(outboundSum_lowerQ) + 1))
+            // var outboundSum_lowerQ = rawData_goodsinfo["2023-02"][60]["outboundSum_lowerQuartile"]
+            // // console.log("outboundSum_lowerQ", outboundSum_lowerQ)
+            // // console.log("log outboundSum_lowerQ", Math.log(outboundSum_lowerQ) + 1)
+            // // console.log("scale outboundSum_lowerQ", scaleLeft(Math.log(outboundSum_lowerQ) + 1))
 
-            var outboundSum_upperQ = rawData_goodsinfo["2023-01"][50]["outboundSum_upperQuartile"]
-            console.log("outboundSum_upperQ", outboundSum_upperQ)
-            console.log("log outboundSum_upperQ", Math.log(outboundSum_upperQ) + 1)
-            console.log("scale outboundSum_upperQ", scaleLeft(Math.log(outboundSum_upperQ) + 1))
+            // var outboundSum_upperQ = rawData_goodsinfo["2023-02"][60]["outboundSum_upperQuartile"]
+            // // console.log("outboundSum_upperQ", outboundSum_upperQ)
+            // // console.log("log outboundSum_upperQ", Math.log(outboundSum_upperQ) + 1)
+            // // console.log("scale outboundSum_upperQ", scaleLeft(Math.log(outboundSum_upperQ) + 1))
             
-            console.log("maxsum", rawData_goodsinfo["2023-01"][50]["outboundSum_max"]) 
-            console.log("log maxVal_outboundSum", this.maxVal_outboundSum)
-            console.log("scale sum_max", scaleLeft(this.maxVal_outboundSum))
+            // // console.log("maxsum", rawData_goodsinfo["2023-02"][60]["outboundSum_max"]) 
+            // // console.log("log maxVal_outboundSum", this.maxVal_outboundSum)
+            // // console.log("scale sum_max", scaleLeft(this.maxVal_outboundSum))
 
 
 
@@ -306,26 +331,26 @@ export default {
 
 
             // 映射outboundFreq_mean
-            var outboundFreq_mean = rawData_goodsinfo["2023-01"][50]["outboundFreq_mean"]
+            var outboundFreq_mean = rawData_goodsinfo["2023-02"][60]["outboundFreq_mean"]
             // console.log("outboundFreq_mean", outboundFreq_mean)
             outboundFreq_mean = Math.log(outboundFreq_mean) + 1
             // console.log("log outboundFreq_mean", outboundFreq_mean)
             var outboundFreq_mean_mapped = scaleRight(outboundFreq_mean);
             // console.log("scale outboundFreq_mean", outboundFreq_mean_mapped)
 
-            var outboundFreq_lowerQ = rawData_goodsinfo["2023-01"][50]["outboundFreq_lowerQuartile"]
-            // console.log("outboundFreq_lowerQ", outboundFreq_lowerQ)
-            // console.log("log outboundFreq_lowerQ", Math.log(outboundFreq_lowerQ) + 1)
-            // console.log("scale outboundFreq_lowerQ", scaleRight(Math.log(outboundFreq_lowerQ) + 1))
+            // var outboundFreq_lowerQ = rawData_goodsinfo["2023-02"][60]["outboundFreq_lowerQuartile"]
+            // // console.log("outboundFreq_lowerQ", outboundFreq_lowerQ)
+            // // console.log("log outboundFreq_lowerQ", Math.log(outboundFreq_lowerQ) + 1)
+            // // console.log("scale outboundFreq_lowerQ", scaleRight(Math.log(outboundFreq_lowerQ) + 1))
 
-            var outboundFreq_upperQ = rawData_goodsinfo["2023-01"][50]["outboundFreq_upperQuartile"]
-            // console.log("outboundFreq_upperQ", outboundFreq_upperQ)
-            // console.log("log outboundFreq_upperQ", Math.log(outboundFreq_upperQ) + 1)
-            // console.log("scale outboundFreq_upperQ", scaleRight(Math.log(outboundFreq_upperQ) + 1))
+            // var outboundFreq_upperQ = rawData_goodsinfo["2023-02"][60]["outboundFreq_upperQuartile"]
+            // // console.log("outboundFreq_upperQ", outboundFreq_upperQ)
+            // // console.log("log outboundFreq_upperQ", Math.log(outboundFreq_upperQ) + 1)
+            // // console.log("scale outboundFreq_upperQ", scaleRight(Math.log(outboundFreq_upperQ) + 1))
             
-            // console.log("maxfreq", rawData_goodsinfo["2023-01"][50]["outboundFreq_max"]) 
-            // console.log("log maxVal_outboundFreq", this.maxVal_outboundFreq)
-            // console.log("scale freq_max", scaleRight(this.maxVal_outboundFreq))
+            // // console.log("maxfreq", rawData_goodsinfo["2023-02"][60]["outboundFreq_max"]) 
+            // // console.log("log maxVal_outboundFreq", this.maxVal_outboundFreq)
+            // // console.log("scale freq_max", scaleRight(this.maxVal_outboundFreq))
             
             // 计算Freq线的起点和终点
             var outboundFreq_lineStart = {
@@ -347,10 +372,142 @@ export default {
                 .style("stroke-width", 2) 
                 .style("stroke-dasharray", ("3, 3")); 
 
+            // 创建一个圆形生成器
+            var circle = d3.arc()
+                .innerRadius(0)
+                .outerRadius(15)
+                .startAngle(0)
+                .endAngle(2 * Math.PI);
+
+            // 在SVG中添加一个路径元素，并使用圆形生成器来创建圆形
+            svg.append("path")
+                .attr("d", circle())
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")") 
+                .style("fill", "none") 
+                .style("stroke", "black"); 
+
             
 
+            // 创建两个半圆弧生成器
+            var arcTop = d3.arc()
+                .innerRadius(15) 
+                .outerRadius(40)
+                .startAngle(-Math.PI * 1/4)
+                .endAngle(Math.PI * 1/4)
+
+            var arcBottom = d3.arc()
+                .innerRadius(15) 
+                .outerRadius(40)
+                .startAngle(Math.PI * 3/4)
+                .endAngle(Math.PI * 5/4); 
+
+            // 在SVG中添加两个路径元素，并使用半圆弧生成器来创建半圆弧
+            svg.append("path")
+                .attr("d", arcTop())
+                .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")") 
+                .style("fill", "none") 
+                .style("stroke", "black"); 
+
+            svg.append("path")
+                .attr("d", arcBottom())
+                .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")") 
+                .style("fill", "none") 
+                .style("stroke", "black"); 
+
+            // 在圆形中添加文字
+            var text;
+            if (data_json.type === 1) {
+                text = "A";
+            } else if (data_json.type === 200) {
+                text = "B";
+            } else if (data_json.type === 3000) {
+                text = "C";
+            }
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height / 2)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "central")
+                .text(text);
+
+            var outboundFreqRatio = rawData_goodsinfo["2023-02"][60]["outboundFreqRatio"]
+            var outboundSumRatio = rawData_goodsinfo["2023-02"][60]["outboundSumRatio"]
+
+            
+            var angleScale_outboundSumRatio = d3.scaleLog()
+                                            .domain([0.0001, 1])
+                                            .range([-Math.PI * 1/4, Math.PI * 1/4]);
+
+            var angleScale_outboundFreqRatio = d3.scaleLog()
+                                            .domain([0.0001, 1])
+                                            .range([Math.PI * 5/4, Math.PI * 3/4]);
+
+            // 创建上半圆弧生成器
+            var arcTop_outboundSumRatio = d3.arc()
+                .innerRadius(15) 
+                .outerRadius(40) 
+                .startAngle(-Math.PI * 1/4)
+                .endAngle(angleScale_outboundSumRatio(outboundSumRatio)); 
+
+            // 定义一个纹理
+            // svg.append("defs")
+            //     .append("pattern")
+            //     .attr("id", "stripe_outboundSumRatio")
+            //     .attr("width", "4")
+            //     .attr("height", "4")
+            //     .attr("patternUnits", "userSpaceOnUse")
+            //     .append("path")
+            //     .attr("d", "M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2")
+            //     .attr("stroke", "#B2DF8A")
+            //     .attr("stroke-width", "1");
+
+            // 定义方格纹理
+            svg.append("defs")
+                .append("pattern")
+                .attr("id", "grid_outboundSumRatio")
+                .attr("width", "10")
+                .attr("height", "10")
+                .attr("patternUnits", "userSpaceOnUse")
+                .append("rect")
+                .attr("width", "5")
+                .attr("height", "5")
+                .attr("fill", "#B2DF8A");
+
+            // 在SVG中添加一个路径元素，并使用半圆弧生成器来创建填充的上半圆弧
+            svg.append("path")
+                .attr("d", arcTop_outboundSumRatio())
+                .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")")
+                .style("fill", "url(#grid_outboundSumRatio)") 
+                .style("stroke", "black");
 
 
+
+            // 创建下半圆弧生成器
+            var arcBottom_outboundFreqRatio = d3.arc()
+                .innerRadius(15) 
+                .outerRadius(40) 
+                .startAngle(Math.PI * 5/4)
+                .endAngle(angleScale_outboundFreqRatio(outboundFreqRatio)); 
+
+            // 定义一个方格纹理
+            svg.append("defs")
+                .append("pattern")
+                .attr("id", "grid_outboundFreqRatio")
+                .attr("width", "10")
+                .attr("height", "10")
+                .attr("patternUnits", "userSpaceOnUse")
+                .append("rect")
+                .attr("width", "5")
+                .attr("height", "5")
+                .attr("fill", "#D7EDF2");
+
+            // 在SVG中添加一个路径元素，并使用半圆弧生成器来创建填充的下半圆弧
+            svg.append("path")
+                .attr("d", arcBottom_outboundFreqRatio())
+                .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")")
+                .style("fill", "url(#grid_outboundFreqRatio)") 
+                .style("stroke", "black");
             
         }      
                 
@@ -360,6 +517,7 @@ export default {
         this.width = this.$refs.downview.offsetWidth
         this.height = this.$refs.downview.offsetHeight
         this.rawData_goodsinfo = require('@/assets/goodsinfo_202301_202305.json')
+        this.rawDta = require('@/assets/timeline_202301_202305.json')
         this.initData()
         this.drawprojection()
         
@@ -367,7 +525,7 @@ export default {
     watch: {
         monthvalue: function(newVal, oldVal) {
             this.initData();
-            // this.drawCalendar();
+            this.drawprojection();
         }
     },
 }
