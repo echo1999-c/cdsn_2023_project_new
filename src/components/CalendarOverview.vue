@@ -123,8 +123,10 @@ export default {
 
             const rightsvg = d3.select("#right")
                             .append('svg')
+                            .attr('id', 'calendarsvg')
                             .attr('width', width)
                             .attr('height', height)
+                            .style("z-index", "1")
 
             var mincolor = this.mincolor
             var lowercolor = this.lowercolor
@@ -214,6 +216,7 @@ export default {
 
             const svg = d3.select("#calendarview")
                             .append('svg')
+                            .attr('id', 'calendarsvg')  
                             .attr('width', width)
                             .attr('height', height)
                             .attr('viewBox', `${-width/2} ${-height/2} ${width} ${height}`)
@@ -259,9 +262,7 @@ export default {
             var verticalPos_circle = -750 // 圆形圆心的垂直位置
 
             var that = this
-            let tooltip = d3.select('#view')
-                            .append("div")
-                            .attr("class", "tooltip")
+            
             // console.log("tooltip", tooltip)
                 
 
@@ -332,56 +333,71 @@ export default {
                             that.$store.commit('addClickDates', item)
                         })
                 })
+                let tooltip = d3.select('#calendarview')
+                            .append("div")
+                            .attr("class", "tooltip")
+                            .style("z-index", "1000")
+                                .style("position", "relative")
+                                .style("opacity", 0)
+                                .style("border", "0px")
+                                .style("border-radius", "8px")
+                                .style("background", "rgb(46, 50, 56)")
+                                .style("color", "snow")
+                                .style("font-family", "Times New Roman")
+                                .style("width", "fit-content")
+                                .style("height", "fit-content")
+                                .style("padding", "5px")
+                                .style("text-align", "left")
 
-                // d3.selectAll("circle")
-                // .on("mousemove", function (event, d) {
-                //     console.log("mousemove")
-                //     console.log("event", event)
-                //     console.log("d", d)
+                
+                d3.selectAll("circle")
+                    .on("mousemove", function (event, d) {
+                        console.log("mousemove")
 
-                //     var filterData = rawData.find(function(o) {
-                //         return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
-                //     });
+                        var filterData = rawData.find(function(o) {
+                            return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
+                        });
 
-                //     console.log("filterData", filterData)
 
-                //     // 获取当前时间
-                //     const currentDate = new Date(filterData.pickingTime);
+                        // 获取当前时间
+                        const currentDate = new Date(filterData.pickingTime);
 
-                //     // 获取年、月、日
-                //     const year = currentDate.getFullYear();
-                //     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-                //     const day = String(currentDate.getDate()).padStart(2, "0");
+                        // 获取年、月、日
+                        const year = currentDate.getFullYear();
+                        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+                        const day = String(currentDate.getDate()).padStart(2, "0");
 
-                //     // 构建日期字符串
-                //     const formattedDate = `${year}-${month}-${day}`;
+                        // 构建日期字符串
+                        const formattedDate = `${year}-${month}-${day}`;
 
-                //     var val = that.value
-                //     let html = ''                       
-                //     if(val === "波次数量"){
-                //         html += `Date: ${formattedDate}<br>
-                //                     batchNumber: ${filterData.batchNum}`
-                //     } else if(val === "订单数量"){
-                //         html += `Date: ${formattedDate}<br>
-                //                     orderNumber: ${filterData.orderNum}`
-                //     } else if(val === "货品数量"){
-                //         html += `Date: ${formattedDate}<br>
-                //                 goodsQuantity: ${filterData.quantity}`
-                //     } else {
-                //         html += `Date: ${formattedDate}<br>
-                //                 goodsTypeNumber: ${filterData.goodsNum}`
-                //     }
+                        var val = that.value
+                        let html = ''                       
+                        if(val === "波次数量"){
+                            html += `Date: ${formattedDate}<br>
+                                        batchNumber: ${filterData.batchNum}`
+                        } else if(val === "订单数量"){
+                            html += `Date: ${formattedDate}<br>
+                                        orderNumber: ${filterData.orderNum}`
+                        } else if(val === "货品数量"){
+                            html += `Date: ${formattedDate}<br>
+                                    goodsQuantity: ${filterData.quantity}`
+                        } else {
+                            html += `Date: ${formattedDate}<br>
+                                    goodsTypeNumber: ${filterData.goodsNum}`
+                        }
 
-                    
-                //     tooltip.style("left", d.clientX + 10 + 'px')
-                //             .style("top", d.layerY + 10 + 'px')
-                //             .style("display", "inline-block")
-                //             .html(html) 
+                        let position = d3.pointer(event);
+                        console.log(position[0], position[1])
+                        tooltip.html(html) 
+                                .style("left", (position[0] + 200) + "px")
+                                .style("top", (position[1] + 500) + "px")
+                                .style("opacity", .9);
+    
 
-                // })
-                // .on("mouseout", function (event, d) {
-                //         tooltip.style("display", "none");
-                // })
+                    })
+                    .on("mouseout", function (event, d) {
+                        tooltip.style("opacity", 0);
+                    })
 
 
 
@@ -502,7 +518,7 @@ export default {
     transform: scale(0.9);
 }
 
-.tooltip{
+/* .tooltip{
     background-color: #eeeeee;
     color: black;
     padding: 10px;
@@ -513,6 +529,6 @@ export default {
     height: auto;
     padding: 14px 10px 4px 10px;
     text-align: center;
-}
+} */
 
 </style>
