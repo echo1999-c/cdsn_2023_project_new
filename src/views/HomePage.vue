@@ -7,14 +7,14 @@
             <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);">
                 <TimeLine></TimeLine>
             </div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);"></div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);">item1</div>
         </div>
         <div class="second_row" style="width: 100%; height: 50%;">
             <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);" >
                 <ProductProjection></ProductProjection>
             </div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(30% - 3px);"></div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);"></div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(30% - 3px);">item2</div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(35% - 3px);">item3</div>
         </div>
     </div>
 </template>
