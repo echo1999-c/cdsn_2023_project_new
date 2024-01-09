@@ -1,13 +1,13 @@
 <template>
-  {{cardVisible}}
+  <!-- {{cardVisible}} -->
     <div id="TimeLine" class="timeline">
         <div class="up">TimeLine</div>
         <div class="down" id="timelineview" ref="timeLine">
-          <el-card style="width: 100%;margin-top: 2px;" shadow="never" v-for="(date, index) in selectedDates" :key="index">
+          <el-card style="width: 100%;" shadow="never" v-for="(date, index) in selectedDates" :key="index">
             <template #header>
               <div class="card-header">
                 <span>{{generateDateStr(date)}}</span>
-                <el-button-group size="small" style="float: right;">
+                <el-button-group size="mini" style="float: right;">
                   <el-button @click="goTop(index)" :icon="Upload"/>
                   <el-button @click="goUp(index)" :icon="Top"/>
                   <el-button @click="goDown(index)" :icon="Bottom"/>

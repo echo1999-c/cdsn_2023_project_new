@@ -222,7 +222,7 @@ export default {
                             .attr('viewBox', `${-width/2} ${-height/2} ${width} ${height}`)
 
             // 创建日期数组
-            var dates = d3.timeDays(new Date(2023, 0, 1), new Date(2024, 0, 1)); // 包含1月-12月的日期
+            var dates = d3.timeDays(new Date(2023, 0, 1), new Date(2023, 5, 1)); // 包含1月-12月的日期
             
             // 读取一年的概览数据
             var rawData = this.rawData
@@ -250,15 +250,16 @@ export default {
 
             // 创建两个g元素，分别代表1月份和2月份
             var months = svg.selectAll("g")
-                            .data([0, 1, 2, 3, 4, 5,6,7,8,9,10,11]) // 会控制旋转的角度，旋转n*30
+                            //.data([0, 1, 2, 3, 4, 5,6,7,8,9,10,11]) // 会控制旋转的角度，旋转n*30
+                            .data([0, 1, 2, 3, 4])
                             .enter()
                             .append("g")
                             .attr("transform", function(d) {                            
-                                return "translate(0,0) rotate(" + (d * 30) + ", 0, 0) scale(0.18)" 
+                                return "translate(0,0) rotate(" + (d * 72) + ", 0, 0) scale(0.16)" 
                             });
             
-            var radius = 21; // 圆形的半径
-            var verticalPos_text = -790 // 文字标签的垂直位置
+            var radius = 30; // 圆形的半径
+            var verticalPos_text = -850 // 文字标签的垂直位置
             var verticalPos_circle = -750 // 圆形圆心的垂直位置
 
             var that = this
@@ -279,7 +280,7 @@ export default {
                         .attr("x", function(d, i) { return (i - 3) * radius * 2; })
                         .attr("y", verticalPos_text)
                         .attr("text-anchor", "middle")
-                        .style('font-size', 24)
+                        .style('font-size', 35)
                         .style('font-family', 'Times New Roman')
                         .style("font-weight", "bold")
                         .text(function(d) { return d; })
@@ -319,8 +320,8 @@ export default {
                         })
                         .attr("r", radius)
                         .on('click', function (d, item) {
-                            console.log("d", d)
-                            console.log("item", item)
+                            // console.log("d", d)
+                            // console.log("item", item)
 
                             // 获取圆形的阴影状态
                             var hasShadow = d3.select(this).style("filter") !== "none";
@@ -352,7 +353,7 @@ export default {
                 
                 d3.selectAll("circle")
                     .on("mousemove", function (event, d) {
-                        console.log("mousemove")
+                        
 
                         var filterData = rawData.find(function(o) {
                             return new Date(o.pickingTime).getTime() === new Date(d).getTime(); // new Date创建日期对象；getTime() 方法获取日期对象的时间戳
@@ -387,7 +388,7 @@ export default {
                         }
 
                         let position = d3.pointer(event);
-                        console.log(position[0], position[1])
+                        
                         tooltip.html(html) 
                                 .style("left", (position[0] + 200) + "px")
                                 .style("top", (position[1] + 500) + "px")

@@ -102,7 +102,7 @@ export default {
             ).map(item => JSON.parse(item));
 
             this.center_coordinates = unique_clusterCenter_relative
-            console.log("unique_clusterCenter_relative", unique_clusterCenter_relative)
+        
             
             minVal_outboundSum = d3.min(goodsinfo, function(d) { return d.outboundSum;})
             maxVal_outboundSum = d3.max(goodsinfo, function(d) { return d.outboundSum;})
@@ -159,7 +159,7 @@ export default {
             // 定义一个颜色数组
             let colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"];
 
-            console.log(this.center_coordinates)
+            
             // 定义一个颜色比例尺
             let colorScale = d3.scaleOrdinal()
                 .domain(this.center_coordinates.map(JSON.stringify)) // 使用字符串作为输入域
@@ -187,11 +187,11 @@ export default {
                                 .bandwidth(30)
                                 .thresholds(30)
                                 (goodsinfo);
-            const contourColor = "#699BCF"
+            const contourColor = "#5587BB"
             const colorScale_contours = d3.scaleSequential(['white', contourColor])
                                 .domain([
-                                    d3.min(contours, (d) => d.value) * 0.5,
-                                    d3.max(contours, (d) => d.value) * 1.5
+                                    d3.min(contours, (d) => d.value) * 0.9,
+                                    d3.max(contours, (d) => d.value) * 1.1
                                 ]);
 
             svg.append("g")

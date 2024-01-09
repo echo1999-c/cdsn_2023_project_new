@@ -5,9 +5,9 @@
                 <CalendarOverview></CalendarOverview>
             </div>
             <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);">
-                <TimeLine></TimeLine>
+                <TimeLineNew></TimeLineNew>
             </div>
-            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);">item1</div>
+            <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);"></div>
         </div>
         <div class="second_row" style="width: 100%; height: 50%;">
             <div class="col" style="height: calc(100% - 3px); width: calc(40% - 3px);" >
@@ -24,13 +24,15 @@
 import CalendarOverview from '@/components/CalendarOverview.vue';
 import ProductProjection from '@/components/ProductProjection.vue';
 import TimeLine from '@/components/TimeLine.vue';
+import TimeLineNew from '@/components/TimeLineNew.vue';
   
 export default {
     name: "homepage",
     components: {
         CalendarOverview,
         ProductProjection,
-        TimeLine
+        TimeLine,
+        TimeLineNew
     }
 };
 </script>
